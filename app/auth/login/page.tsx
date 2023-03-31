@@ -1,0 +1,50 @@
+"use client";
+import { Button } from "@elements/Button";
+import { TextBox } from "@elements/TextBox";
+import { signIn } from "next-auth/react";
+import { useRef } from "react";
+
+interface IProps {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+const LoginPage = ({ searchParams }: IProps) => {
+  const userName = useRef("");
+  const pass = useRef("");
+
+  const onSubmit = async () => {
+    const result = await signIn("credentials", {
+      username: userName.current,
+      password: pass.current,
+      redirect: true,
+      callbackUrl: "/",
+    });
+  };
+  return (
+    <div
+      className={
+        "flex flex-col justify-center items-center  h-screen bg-gradient-to-br gap-1 from-cyan-300 to-sky-600"
+      }
+    >
+      {searchParams?.message && (
+        <p className="px-5 py-2 text-red-700 bg-red-100 rounded-md">
+          {searchParams?.message}
+        </p>
+      )}
+      <div className="flex flex-col gap-2 py-4 bg-white rounded-md shadow px-7">
+        <TextBox
+          labelText="User Name"
+          onChange={(e) => (userName.current = e.target.value)}
+        />
+        <TextBox
+          labelText="Password"
+          type={"password"}
+          onChange={(e) => (pass.current = e.target.value)}
+        />
+        <Button onClick={onSubmit}>Login</Button>
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;
